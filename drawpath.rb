@@ -9,7 +9,7 @@ class Drawpath < Gosu::Window
 
   def needs_cursor?() true end
 
-  def button_down btn
+  def button_down(btn)
     case btn
     when Gosu::KbEscape
       close
@@ -21,6 +21,15 @@ class Drawpath < Gosu::Window
       else
         @end_x = mouse_x
         @end_y = mouse_y
+      end
+    end
+  end
+
+  def update
+    @things.each { |t| t.color = Gosu::Color::RED } 
+    if @end_x
+      @things.each do |thing|
+        thing.color = Gosu::Color::BLUE if thing.on_path? @start_x, @start_y, @end_x, @end_y
       end
     end
   end

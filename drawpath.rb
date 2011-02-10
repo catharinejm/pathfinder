@@ -4,7 +4,7 @@ require 'thing'
 class Drawpath < Gosu::Window
   def initialize
     super 1024, 768, false
-    @things = [Thing.new(self, 512, 384, 100, 100)]
+    @things = [Thing.new(self, 512, 384, 100, 100), Thing.new(self, 120, 240, 75, 75)]
   end
 
   def needs_cursor?() true end

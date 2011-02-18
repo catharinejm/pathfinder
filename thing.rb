@@ -75,38 +75,59 @@ class Thing
   end
 
   def nearest_corner(stx, sty, edx, edy)
+    li = left_intx(stx, sty, edx, edy)
+    ri = right_intx(stx, sty, edx, edy)
     ti = top_intx(stx, sty, edx, edy)
     bi = bottom_intx(stx, sty, edx, edy)
     
     if stx < edx
       if sty < edy
-        if ti
-          [right+1, top-1]
-        else
-          [left-1, bottom+1]
-        end
+        x, y = ti || li
       else
-        if bi
-          [right+1, bottom+1]
-        else
-          [left-1, top-1]
-        end
+        x, y = bi || li
       end
     else
       if sty < edy
-        if ti
-          [left-1, top-1]
+        x, y = ti || ri
+      else
+        x, y = bi || ri
+      end
+    end
+    x = x > self.x ? right+1 : left-1
+    y = y > self.y ? bottom+1 : top-1
+
+    if stx == x && sty == y
+      if x == left-1
+        if y == top-1
+          if bi
+            y = bottom+1
+          else
+            x = right+1
+          end
         else
-          [right+1, bottom+1]
+          if ti
+            y = top-1
+          else
+            x = right+1
+          end
         end
       else
-        if bi
-          [left-1, bottom+1]
+        if y == top-1
+          if bi
+            y = bottom+1
+          else
+            x = left-1
+          end
         else
-          [right+1, top-1]
+          if ti
+            y = top-1
+          else
+            x = left-1
+          end
         end
       end
     end
+    [x, y]
   end
 
   def draw

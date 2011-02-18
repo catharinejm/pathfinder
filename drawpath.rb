@@ -41,10 +41,10 @@ class Drawpath < Gosu::Window
     @things.each { |t| t.color = Gosu::Color::RED } 
     if @end_x && @cooked_paths.empty?
       @cooked_paths.push [@start_x, @start_y, @end_x, @end_y]
+      @debug_paths.push @cooked_paths.dup
       @things.each do |thing|
         # debugger
         paths = @cooked_paths.dup
-        @debug_paths.push paths.dup
         @cooked_paths.clear
         until paths.empty?
           stx, sty, edx, edy = paths.shift
@@ -52,10 +52,10 @@ class Drawpath < Gosu::Window
             x, y = thing.nearest_corner stx, sty, edx, edy
             @cooked_paths.push [stx, sty, x, y]
             paths.unshift [x, y, edx, edy]
+            @debug_paths.push(@cooked_paths.dup + paths)
           else
             @cooked_paths.push [stx, sty, edx, edy]
           end
-          @debug_paths.push @cooked_paths.dup
         end
       end
     end

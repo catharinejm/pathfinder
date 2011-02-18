@@ -80,29 +80,29 @@ class Thing
     if stx < edx
       if sty < edy
         if ti
-          [top-1, right+1]
+          [right+1, top-1]
         else
-          [bottom+1, left-1]
+          [left-1, bottom+1]
         end
       else
         if bi
-          [bottom+1, right+1]
+          [right+1, bottom+1]
         else
-          [top-1, left-1]
+          [left-1, top-1]
         end
       end
     else
       if sty < edy
         if ti
-          [top-1, left-1]
+          [left-1, top-1]
         else
-          [bottom+1, right+1]
+          [right+1, bottom+1]
         end
       else
         if bi
-          [bottom+1, left-1]
+          [left-1, bottom+1]
         else
-          [top-1, right+1]
+          [right+1, top-1]
         end
       end
     end

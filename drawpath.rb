@@ -4,7 +4,8 @@ require 'thing'
 class Drawpath < Gosu::Window
   def initialize
     super 1024, 768, false
-    @things = [Thing.new(self, 512, 384, 100, 100), Thing.new(self, 120, 240, 75, 75)]
+    # @things = [Thing.new(self, 512, 384, 100, 100), Thing.new(self, 120, 240, 75, 75)]
+    @things = [Thing.new(self, 512, 384, 100, 100)]
     @raw_paths = []
     @cooked_paths = []
   end
@@ -24,7 +25,6 @@ class Drawpath < Gosu::Window
       else
         @end_x = mouse_x
         @end_y = mouse_y
-        @raw_paths = [[@start_x, @start_y, @end_x, @end_y]]
       end
     end
   end
@@ -33,14 +33,17 @@ class Drawpath < Gosu::Window
     @things.each { |t| t.color = Gosu::Color::RED } 
     if @end_x
       @things.each do |thing|
-        @raw_paths.each do |stx, sty, edx, edy|
+        # debugger
+        path = [@start_x, @start_y, @end_x, @end_y]
+        while path
+          stx, sty, edx, edy = path
           if thing.on_path? stx, sty, edx, edy
             x, y = thing.nearest_corner stx, sty, edx, edy
             @cooked_paths.push [stx, sty, x, y]
-            @cooked_paths.push [x, y, edx, edy]
-            # debugger
+            path = [x, y, edx, edy]
           else
             @cooked_paths.push [stx, sty, edx, edy]
+            path = nil
           end
         end
       end

@@ -9,4 +9,4 @@
 * Click yr. moose.
 * Press D to toggle debug mode
   * In debug mode press Enter/Return to cycle through pathfinding steps
-* Esc to exit
+* Esc or Q to exit

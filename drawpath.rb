@@ -15,7 +15,7 @@ class Drawpath < Gosu::Window
 
   def button_down(btn)
     case btn
-    when Gosu::KbEscape
+    when Gosu::KbEscape, Gosu::KbQ
       close
     when Gosu::MsLeft
       if @end_x || !@start_x

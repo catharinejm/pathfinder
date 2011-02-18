@@ -66,6 +66,7 @@ class Thing
   end
 
   def on_path?(stx, sty, edx, edy)
+    raise [stx,sty,edx,edy].inspect unless stx && edx && sty && edy
     left_intx(stx, sty, edx, edy) || 
     right_intx(stx, sty, edx, edy) || 
     top_intx(stx, sty, edx, edy) || 
@@ -79,29 +80,29 @@ class Thing
     if stx < edx
       if sty < edy
         if ti
-          [top, right]
+          [top-1, right+1]
         else
-          [bottom, left]
+          [bottom+1, left-1]
         end
       else
         if bi
-          [bottom, right]
+          [bottom+1, right+1]
         else
-          [top, left]
+          [top-1, left-1]
         end
       end
     else
       if sty < edy
         if ti
-          [top, left]
+          [top-1, left-1]
         else
-          [bottom, right]
+          [bottom+1, right+1]
         end
       else
         if bi
-          [bottom, left]
+          [bottom+1, left-1]
         else
-          [top, right]
+          [top-1, right+1]
         end
       end
     end

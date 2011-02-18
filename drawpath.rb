@@ -5,6 +5,8 @@ class Drawpath < Gosu::Window
   def initialize
     super 1024, 768, false
     @things = [Thing.new(self, 512, 384, 100, 100), Thing.new(self, 120, 240, 75, 75)]
+    @raw_paths = []
+    @cooked_paths = []
   end
 
   def needs_cursor?() true end
@@ -18,9 +20,11 @@ class Drawpath < Gosu::Window
         @start_x = mouse_x
         @start_y = mouse_y
         @end_x = @end_y = nil
+        @cooked_paths = []
       else
         @end_x = mouse_x
         @end_y = mouse_y
+        @raw_paths = [[@start_x, @start_y, @end_x, @end_y]]
       end
     end
   end
@@ -29,7 +33,16 @@ class Drawpath < Gosu::Window
     @things.each { |t| t.color = Gosu::Color::RED } 
     if @end_x
       @things.each do |thing|
-        thing.color = Gosu::Color::BLUE if thing.on_path? @start_x, @start_y, @end_x, @end_y
+        @raw_paths.each do |stx, sty, edx, edy|
+          if thing.on_path? stx, sty, edx, edy
+            x, y = thing.nearest_corner stx, sty, edx, edy
+            @cooked_paths.push [stx, sty, x, y]
+            @cooked_paths.push [x, y, edx, edy]
+            # debugger
+          else
+            @cooked_paths.push [stx, sty, edx, edy]
+          end
+        end
       end
     end
   end
@@ -45,7 +58,7 @@ class Drawpath < Gosu::Window
         @start_x+5, @start_y+5, c)
     end
     if @end_x
-      c=Gosu::Color::YELLOW
+      c=Gosu::Color::BLUE
       draw_quad(
         @end_x-5, @end_y-5, c,
         @end_x+5, @end_y-5, c,
@@ -53,11 +66,14 @@ class Drawpath < Gosu::Window
         @end_x+5, @end_y+5, c)
     end
 
-    if @start_x && @end_x
-      c=Gosu::Color::GREEN
-      draw_line(
-        @start_x, @start_y, c,
-        @end_x, @end_y, c)
+    lc=Gosu::Color::YELLOW
+    dc=Gosu::Color::GREEN
+    @cooked_paths.each do |stx, sty, edx, edy|
+      draw_line(stx, sty, lc, edx, edy, lc)
+      draw_quad(edx-5,edy-5,dc,
+                edx+5,edy-5,dc,
+                edx-5,edy+5,dc,
+                edx+5,edy+5,dc)
     end
 
     if @end_x || !@start_x

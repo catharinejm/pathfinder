@@ -30,6 +30,8 @@ class Drawpath < Gosu::Window
     if @end_x
       @things.each do |thing|
         thing.color = Gosu::Color::BLUE if thing.on_path? @start_x, @start_y, @end_x, @end_y
+        x,y=thing.left_intersection @start_x, @start_y, @end_x, @end_y
+        puts "X: #{x}, Y: #{y}"
       end
     end
   end

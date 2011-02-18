@@ -1,5 +1,6 @@
+require 'matrix'
+
 class Thing
-  RAD2 = Math.sqrt(2)
   attr_reader :window
   attr_accessor :x, :y, :width, :height, :color
   def initialize(window, x, y, width, height)
@@ -16,40 +17,33 @@ class Thing
   def left() x - width/2.0 end
   def right() x + width/2.0 end
 
+  def left_intersection(stx, sty, edx, edy)
+    px_nmr =
+      Matrix[
+        [Matrix[[stx,sty],[edx,edy]].det, Matrix[[stx,1],[edx,1]].det],
+        [Matrix[[left,top],[left,bottom]].det, Matrix[[left,1],[left,1]].det]
+      ].det
+    py_nmr =
+      Matrix[
+        [Matrix[[stx,sty],[edx,edy]].det, Matrix[[sty,1],[edy,1]].det],
+        [Matrix[[left,top],[left,bottom]].det, Matrix[[top,1],[bottom,1]].det]
+      ].det
+    denom =
+      Matrix[
+        [Matrix[[stx,1],[edx,1]].det, Matrix[[sty,1],[edy,1]].det],
+        [Matrix[[left,1],[left,1]].det, Matrix[[top,1],[bottom,1]].det]
+      ].det
+
+    [px_nmr/denom, py_nmr/denom]
+  end
+
   def on_path?(stx, sty, edx, edy)
-    slope = (edy-sty)/(edx-stx)
+    false
+  end
+
+  def nearest_corner(stx, sty, edx, edy)
     if stx <= left
-      if sty <= top
-        edx >= left && edy >= top && slope >= (top-sty)/(right-stx) && slope <= (bottom-sty)/(left-stx)
-      elsif sty <= bottom
-        edx >= left && slope >= (top-sty)/(left-stx) && slope <= (bottom-sty)/(left-stx)
-      else
-        edx >= left && edy <= bottom && slope >= (top-sty)/(left-stx) && slope <= (bottom-sty)/(right-stx)
-      end
-    elsif stx <= right
-      if sty <= top
-        if slope < 0
-          edy >= top && slope <= (top-sty)/(left-stx)
-        else
-          edy >= top && slope >= (top-sty)/(right-stx)
-        end
-      elsif sty <= bottom
-        true
-      else
-        if slope < 0
-          edy <= bottom && slope <= (bottom-sty)/(right-stx)
-        else
-          edy <= bottom && slope >= (bottom-sty)/(left-stx)
-        end
-      end
-    else
-      if sty <= top
-        edx <= right && edy >= top && slope <= (top-sty)/(left-stx) && slope >= (bottom-sty)/(right-stx)
-      elsif sty <= bottom
-        edx <= right && slope <= (top-sty)/(right-stx) && slope >= (bottom-sty)/(right-stx)
-      else
-        edx <= right && edy <= bottom && slope >= (bottom-sty)/(left-stx) && slope <= (top-sty)/(right-stx)
-      end
+      
     end
   end
 

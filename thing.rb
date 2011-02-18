@@ -18,6 +18,7 @@ class Thing
   def right() x + width/2.0 end
 
   def side_intx(stx, sty, edx, edy, side)
+    return nil unless [stx, side, edx].sort[1] == side
     py_nmr =
       Matrix[
         [Matrix[[stx,sty],[edx,edy]].det, Matrix[[sty,1],[edy,1]].det],
@@ -42,6 +43,7 @@ class Thing
   end
 
   def tb_intx(stx, sty, edx, edy, tb)
+    return nil unless [sty, tb, edy].sort[1] == tb
     px_nmr =
       Matrix[
         [Matrix[[stx,sty],[edx,edy]].det, Matrix[[stx,1],[edx,1]].det],

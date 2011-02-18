@@ -68,7 +68,6 @@ class Thing
   end
 
   def on_path?(stx, sty, edx, edy)
-    raise [stx,sty,edx,edy].inspect unless stx && edx && sty && edy
     left_intx(stx, sty, edx, edy) || 
     right_intx(stx, sty, edx, edy) || 
     top_intx(stx, sty, edx, edy) || 

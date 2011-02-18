@@ -6,8 +6,9 @@ class Drawpath < Gosu::Window
     super 1024, 768, false
     @things = [Thing.new(self, 512, 384, 100, 100), Thing.new(self, 120, 240, 75, 75)]
     # @things = [Thing.new(self, 512, 384, 100, 100)]
-    @raw_paths = []
     @cooked_paths = []
+    @debug_paths = []
+    @debug_index = 0
   end
 
   def needs_cursor?() true end
@@ -22,10 +23,17 @@ class Drawpath < Gosu::Window
         @start_y = mouse_y
         @end_x = @end_y = nil
         @cooked_paths.clear
+        @debug_paths.clear
       else
         @end_x = mouse_x
         @end_y = mouse_y
       end
+    when Gosu::KbD
+      @debug = !@debug
+      @debug_index = 0
+    when Gosu::KbEnter, Gosu::KbReturn
+      @debug_index += 1
+      @debug_index %= @debug_paths.length
     end
   end
 
@@ -36,6 +44,7 @@ class Drawpath < Gosu::Window
       @things.each do |thing|
         # debugger
         paths = @cooked_paths.dup
+        @debug_paths.push paths.dup
         @cooked_paths.clear
         until paths.empty?
           stx, sty, edx, edy = paths.shift
@@ -46,8 +55,23 @@ class Drawpath < Gosu::Window
           else
             @cooked_paths.push [stx, sty, edx, edy]
           end
+          @debug_paths.push @cooked_paths.dup
         end
       end
+    end
+  end
+
+  def draw_cookin paths
+    return unless paths
+    lc=Gosu::Color::YELLOW
+    dc=Gosu::Color::GREEN
+    paths.each_with_index do |(stx, sty, edx, edy), idx|
+      draw_line(stx, sty, lc, edx, edy, lc)
+      draw_quad(edx-5,edy-5,dc,
+                edx+5,edy-5,dc,
+                edx-5,edy+5,dc,
+                edx+5,edy+5,dc)
+      Gosu::Image.from_text(self, (idx+1).to_s, "monaco", 20).draw(edx, edy, 10, 1, 1, Gosu::Color::WHITE)
     end
   end
 
@@ -70,15 +94,11 @@ class Drawpath < Gosu::Window
         @end_x+5, @end_y+5, c)
     end
 
-    lc=Gosu::Color::YELLOW
-    dc=Gosu::Color::GREEN
-    @cooked_paths.each_with_index do |(stx, sty, edx, edy), idx|
-      draw_line(stx, sty, lc, edx, edy, lc)
-      draw_quad(edx-5,edy-5,dc,
-                edx+5,edy-5,dc,
-                edx-5,edy+5,dc,
-                edx+5,edy+5,dc)
-      Gosu::Image.from_text(self, (idx+1).to_s, "monaco", 20).draw(edx, edy, 10, 1, 1, Gosu::Color::WHITE)
+    if @debug
+      draw_cookin @debug_paths[@debug_index]
+      Gosu::Image.from_text(self, "DEBUG - #@debug_index", "monaco", 24).draw(width-150, 0, 0)
+    else
+      draw_cookin @cooked_paths
     end
 
     if @end_x || !@start_x

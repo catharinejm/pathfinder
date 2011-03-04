@@ -78,55 +78,23 @@ class Thing
     li = left_intx(stx, sty, edx, edy)
     ri = right_intx(stx, sty, edx, edy)
     ti = top_intx(stx, sty, edx, edy)
-    bi = bottom_intx(stx, sty, edx, edy)
     
-    if stx < edx
-      if sty < edy
-        x, y = ti || li
+    if li
+      if ri
+        x = stx < edx ? left-1 : right+1
+        y = edy < @y ? top-1 : bottom+1
       else
-        x, y = bi || li
+        x = left-1
+        y = ti ? top-1 : bottom+1
       end
+    elsif ri
+      x = right+1
+      y = ti ? top-1 : bottom+1
     else
-      if sty < edy
-        x, y = ti || ri
-      else
-        x, y = bi || ri
-      end
+      x = edx < @x ? left-1 : right+1
+      y = sty < edy ? top-1 : bottom+1
     end
-    x = x > self.x ? right+1 : left-1
-    y = y > self.y ? bottom+1 : top-1
-
-    if stx == x && sty == y
-      if x == left-1
-        if y == top-1
-          if bi
-            y = bottom+1
-          else
-            x = right+1
-          end
-        else
-          if ti
-            y = top-1
-          else
-            x = right+1
-          end
-        end
-      else
-        if y == top-1
-          if bi
-            y = bottom+1
-          else
-            x = left-1
-          end
-        else
-          if ti
-            y = top-1
-          else
-            x = left-1
-          end
-        end
-      end
-    end
+    
     [x, y]
   end
 
